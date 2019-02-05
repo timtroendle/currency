@@ -139,8 +139,8 @@ def test_no_inflation_in_same_year(year):
 @pytest.mark.parametrize(
     'year, currency',
     [(year, currency)
-     for year in range(1970, 2015)
-     for currency in ["USD", "EGP"]]
+     for year in range(1960, 2015)
+     for currency in ["USD", "ZAR"]]
 )
 def test_inflation_is_steadily_rising(year, currency):
     base_value = 1.1

@@ -7,7 +7,7 @@ import pandas as pd
 
 PATH_TO_DATA = Path(__file__).parent / ".." / "data"
 PATH_TO_EXCHANGE_RATES = PATH_TO_DATA / "exchange-rates" / "API_PA.NUS.FCRF_DS2_en_csv_v2_10322214.csv"
-PATH_TO_DEFLATOR = PATH_TO_DATA / "gdp-deflator" / "API_NY.GDP.DEFL.ZS_DS2_en_csv_v2.csv"
+PATH_TO_DEFLATOR = PATH_TO_DATA / "gdp-deflator" / "API_NY.GDP.DEFL.ZS_DS2_en_csv_v2_10405103.csv"
 EXCHANGE_RATE_TIME_SERIES = (
     pd.read_csv(PATH_TO_EXCHANGE_RATES, skiprows=4)
       .iloc[:, :-1]
