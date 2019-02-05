@@ -11,7 +11,12 @@ setup(
     url='https://www.github.com/timtroendle/currency',
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
-    install_requires=[],
+    install_requires=["click"],
+    entry_points={
+        'console_scripts': [
+            'currency=currency.cli:currency',
+        ],
+    },
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Science/Research',

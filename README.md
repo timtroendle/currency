@@ -8,7 +8,7 @@ A time aware tool to convert currencies.
 
 currency has the following features:
 
-* convert between currencies at a particular point in time
+* convert between currencies at a particular point in time (to US Dollar only)
 * convert between the same currency in different points in time (US Dollar only)
 
 ### Installation

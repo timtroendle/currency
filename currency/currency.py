@@ -118,13 +118,15 @@ def currency_in_dollars(currency_value, currency, year, exchange_rates=EXCHANGE_
     assert isinstance(currency, str), "Currency must be given as a string."
     currency = currency.lower()
     if currency not in [currency.alpha_3 for currency in SUPPORTED_CURRENCIES]:
-        raise ValueError("Currency {} is not supported.".format(currency))
+        raise ValueError(f"Currency {currency.upper()} is not supported.")
     country = CURRENCY_TO_COUNTRY_MAP[currency]
-    exchange_rate = exchange_rates.loc[year, country]
-    if np.isnan(exchange_rate):
-        raise LookupError("Data of year {} for country {} not available. "
-                          "Cannot convert {} {}.".format(year, country,
-                                                         currency_value, currency))
+    try:
+        exchange_rate = exchange_rates.loc[year, country]
+        if np.isnan(exchange_rate):
+            raise LookupError()
+    except LookupError:
+        raise LookupError(f"Data of year {year} for country {country} not available. "
+                          f"Cannot convert {currency_value} {currency.upper()}.")
     return currency_value / exchange_rate
 
 
@@ -146,6 +148,10 @@ def deflate_monetary_value(base_value, base_year, to_year, deflator=DEFLATOR):
 
     """
     country = CURRENCY_TO_COUNTRY_MAP["usd"]
-    base = deflator.loc[base_year, country]
-    to = deflator.loc[to_year, country]
+    try:
+        base = deflator.loc[base_year, country]
+        to = deflator.loc[to_year, country]
+    except LookupError:
+        raise LookupError(f"Data for year {base_year} or {to_year} not available. "
+                          f"Cannot deflate {base_value} USD{base_year} to year {to_year}.")
     return base_value * to / base
