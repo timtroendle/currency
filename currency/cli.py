@@ -21,16 +21,16 @@ def currency():
 
 @currency.command()
 @click.argument("amount", type=float)
-@click.argument("from_currency", type=Currency())
-@click.argument("to_currency", type=Currency())
+@click.argument("base_currency", type=Currency())
+@click.argument("target_currency", type=Currency())
 @click.argument("year", type=int)
-def convert(amount, from_currency, to_currency, year):
+def convert(amount, base_currency, target_currency, year):
     """Convert monetary amounts to other currency based on historic exchange rates."""
     try:
         result = cu.convert(
             amount=amount,
-            from_currency=from_currency,
-            to_currency=to_currency,
+            base_currency=base_currency,
+            target_currency=target_currency,
             year=year
         )
         click.echo(result)
@@ -50,7 +50,7 @@ def deflate(base_amount, currency, base_year, target_year):
             base_value=base_amount,
             currency=currency,
             base_year=base_year,
-            to_year=target_year
+            target_year=target_year
         )
         click.echo(result)
     except LookupError as e:
@@ -59,17 +59,17 @@ def deflate(base_amount, currency, base_year, target_year):
 
 @currency.command()
 @click.argument("amount", type=float)
-@click.argument("from_currency", type=Currency())
-@click.argument("to_currency", type=Currency())
+@click.argument("base_currency", type=Currency())
+@click.argument("target_currency", type=Currency())
 @click.argument("base_year", type=int)
 @click.argument("target_year", type=int)
-def convert_usd(amount, from_currency, to_currency, base_year, target_year):
+def convert_usd(amount, base_currency, target_currency, base_year, target_year):
     """Convert monetary amounts using US inflation."""
     try:
         result = cu.convert_through_usd(
             amount=amount,
-            from_currency=from_currency,
-            to_currency=to_currency,
+            base_currency=base_currency,
+            target_currency=target_currency,
             base_year=base_year,
             target_year=target_year
         )

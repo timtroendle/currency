@@ -76,28 +76,28 @@ def test_between_5_and_10_egyptian_pound_per_dollar(year):
 @pytest.mark.parametrize('year', range(2000, 2015))
 def test_convert_identity(year):
     amount = 10
-    identity = convert(amount=amount, from_currency="eur", to_currency="eur", year=year)
+    identity = convert(amount=amount, base_currency="eur", target_currency="eur", year=year)
     assert math.isclose(identity, amount)
 
 
 @pytest.mark.parametrize('year', range(2010, 2017))
 def test_pound_up_to_50pct_stronger_than_eur(year):
-    eur = convert(amount=1, from_currency="gbp", to_currency="eur", year=year)
+    eur = convert(amount=1, base_currency="gbp", target_currency="eur", year=year)
     assert 1 < eur < 1.5
 
 
 def test_convert_through_usd_without_time_is_convert():
     through_usd = convert_through_usd(
         amount=1,
-        from_currency="gbp",
-        to_currency="eur",
+        base_currency="gbp",
+        target_currency="eur",
         base_year=2009,
         target_year=2009
     )
     normal = convert(
         amount=1,
-        from_currency="gbp",
-        to_currency="eur",
+        base_currency="gbp",
+        target_currency="eur",
         year=2009
     )
     assert math.isclose(through_usd, normal)
@@ -106,15 +106,15 @@ def test_convert_through_usd_without_time_is_convert():
 def test_convert_through_usd():
     eur2009 = convert_through_usd(
         amount=1,
-        from_currency="gbp",
-        to_currency="eur",
+        base_currency="gbp",
+        target_currency="eur",
         base_year=2009,
         target_year=2009
     )
     eur2010 = convert_through_usd(
         amount=1,
-        from_currency="gbp",
-        to_currency="eur",
+        base_currency="gbp",
+        target_currency="eur",
         base_year=2009,
         target_year=2010
     )
@@ -131,7 +131,7 @@ def test_no_inflation_in_same_year(year):
         currency="USD",
         base_value=base_value,
         base_year=year,
-        to_year=year
+        target_year=year
     )
     assert math.isclose(base_value, current_value, abs_tol=0.01)
 
@@ -148,6 +148,6 @@ def test_inflation_is_steadily_rising(year, currency):
         currency=currency,
         base_value=base_value,
         base_year=year,
-        to_year=year + 1
+        target_year=year + 1
     )
     assert current_value > base_value

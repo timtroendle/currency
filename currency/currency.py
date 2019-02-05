@@ -98,7 +98,7 @@ CURRENCY_TO_COUNTRY_MAP = {
 }
 
 
-def convert(amount, from_currency, to_currency, year, exchange_rates=EXCHANGE_RATE_TIME_SERIES):
+def convert(amount, base_currency, target_currency, year, exchange_rates=EXCHANGE_RATE_TIME_SERIES):
     """Convert monetary amounts to other currencies based on historic exchange rates to US Dollars.
 
     By default, the data stems from IMF:
@@ -107,8 +107,8 @@ def convert(amount, from_currency, to_currency, year, exchange_rates=EXCHANGE_RA
 
     Parameters:
         * amount: (float) amount to convert
-        * from_currency: alpha_3 code of source currency
-        * to_currency: alpha_3 code of target currency
+        * base_currency: alpha_3 code of source currency
+        * target_currency: alpha_3 code of target currency
         * year: the year of the source amount
         * exchange_rates: by default IMF data, but other can be injected
 
@@ -118,18 +118,18 @@ def convert(amount, from_currency, to_currency, year, exchange_rates=EXCHANGE_RA
     """
     amount_in_dollar = currency_in_dollars(
         currency_value=amount,
-        currency=from_currency,
+        currency=base_currency,
         year=year
     )
     dollar_per_target_currency = currency_in_dollars(
         currency_value=1,
-        currency=to_currency,
+        currency=target_currency,
         year=year
     )
     return amount_in_dollar / dollar_per_target_currency
 
 
-def convert_through_usd(amount, from_currency, to_currency, base_year, target_year,
+def convert_through_usd(amount, base_currency, target_currency, base_year, target_year,
                         exchange_rates=EXCHANGE_RATE_TIME_SERIES, deflator=DEFLATOR):
     """Convert monetary amounts using US inflation.
 
@@ -148,8 +148,8 @@ def convert_through_usd(amount, from_currency, to_currency, base_year, target_ye
 
     Parameters:
         * amount: (float) amount to convert
-        * from_currency: alpha_3 code of source currency
-        * to_currency: alpha_3 code of target currency
+        * base_currency: alpha_3 code of source currency
+        * target_currency: alpha_3 code of target currency
         * base_year: the year of the source amount
         * target_year: the target year
         * exchange_rates: by default IMF data, but other can be injected
@@ -162,19 +162,19 @@ def convert_through_usd(amount, from_currency, to_currency, base_year, target_ye
     assert target_year >= base_year
     amount_in_dollar = currency_in_dollars(
         currency_value=amount,
-        currency=from_currency,
+        currency=base_currency,
         year=base_year
     )
     amount_in_dollar = deflate_monetary_value(
         base_value=amount_in_dollar,
         currency="USD",
         base_year=base_year,
-        to_year=target_year,
+        target_year=target_year,
         deflator=deflator
     )
     dollar_per_target_currency = currency_in_dollars(
         currency_value=1,
-        currency=to_currency,
+        currency=target_currency,
         year=target_year
     )
     return amount_in_dollar / dollar_per_target_currency
@@ -212,7 +212,7 @@ def currency_in_dollars(currency_value, currency, year, exchange_rates=EXCHANGE_
     return currency_value / exchange_rate
 
 
-def deflate_monetary_value(base_value, currency, base_year, to_year, deflator=DEFLATOR):
+def deflate_monetary_value(base_value, currency, base_year, target_year, deflator=DEFLATOR):
     """Deflate monetary value from base year to other year based on GDP.
 
     By default uses a deflator published by the Worldbank:
@@ -223,7 +223,7 @@ def deflate_monetary_value(base_value, currency, base_year, to_year, deflator=DE
         * base_value: the monetary amount in the base year
         * currency: the currency of the monetary amount
         * base_year: the year for which the monetary value is given
-        * to_year: the year to which the base value should be transformed
+        * target_year: the year to which the base value should be transformed
         * deflator: by default Worldbank data, but other can be injected
 
     Returns:
@@ -237,10 +237,11 @@ def deflate_monetary_value(base_value, currency, base_year, to_year, deflator=DE
     country = CURRENCY_TO_COUNTRY_MAP[currency]
     try:
         base = deflator.loc[base_year, country]
-        to = deflator.loc[to_year, country]
-        if np.isnan(base) or np.isnan(to):
+        target = deflator.loc[target_year, country]
+        if np.isnan(base) or np.isnan(target):
             raise LookupError()
     except LookupError:
-        raise LookupError(f"Data for year {base_year} or {to_year} not available. "
-                          f"Cannot deflate {base_value} {currency.upper()}{base_year} to {currency.upper()}{to_year}.")
-    return base_value * to / base
+        raise LookupError(f"Data for year {base_year} or {target_year} not available. "
+                          f"Cannot deflate {base_value} {currency.upper()}{base_year} "
+                          f"to {currency.upper()}{target_year}.")
+    return base_value * target / base
