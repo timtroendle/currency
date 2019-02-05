@@ -19,9 +19,16 @@ pip install git+git://github.com/timtroendle/currency@develop
 
 ### Usage Example
 
-    $ currency convert 14 GBP EUR 2009 # convert 14 GBP2009 to EUR2009
-    $ currency deflate 14 GBP 2009 2016 # deflate 14 GBP2009 to GBP2016
+```bash
+$ currency convert 14 EUR GBP 2009 # convert 14 EUR2009 to GBP2009
+$ currency deflate 12.5 GBP 2009 2016 # deflate 12.5 GBP2009 to GBP2016
+$ currency convert-usd 14 EUR GBP 2009 2016 # do both at the same time, using US inflation
+```
 
+Comparing different monetary values from different points in time is difficult, as the choice
+of currency for deflation is both arbitrary and influential. The `convert-usd` command
+always uses US deflation data and that yields different results as using deflation data from Brazil
+for example.
 
 ## Developer Guide
 

@@ -45,3 +45,9 @@ def test_currency_deflation(runner):
 def test_no_deflator_available(runner):
     result = runner.invoke(cli.deflate, ['15', 'USD', '2009', '2090'])
     assert result.exit_code != 0
+
+
+def test_convert_and_deflate_through_usd(runner):
+    result = runner.invoke(cli.convert_usd, ['99', 'EUR', 'EUR', '2009', '2009'])
+    assert result.exit_code == 0
+    assert math.isclose(float(result.output), 99)

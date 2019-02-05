@@ -129,6 +129,57 @@ def convert(amount, from_currency, to_currency, year, exchange_rates=EXCHANGE_RA
     return amount_in_dollar / dollar_per_target_currency
 
 
+def convert_through_usd(amount, from_currency, to_currency, base_year, target_year,
+                        exchange_rates=EXCHANGE_RATE_TIME_SERIES, deflator=DEFLATOR):
+    """Convert monetary amounts using US inflation.
+
+    This converts between different currencies and different points in time. Inflation
+    is adjusted using US data, which is an arbitrary, but influential choice: using inflation
+    data of another country would yield different results. See
+    https://economics.stackexchange.com/a/20633/16280
+
+    By default, exchange rate data stems from IMF:
+    https://data.worldbank.org/indicator/PA.NUS.FCRF
+    but you can also inject your own timeseries, see below.
+
+    By default, deflator data stems from IMF:
+    https://data.worldbank.org/indicator/PA.NUS.FCRF
+    but you can also inject your own timeseries, see below.
+
+    Parameters:
+        * amount: (float) amount to convert
+        * from_currency: alpha_3 code of source currency
+        * to_currency: alpha_3 code of target currency
+        * base_year: the year of the source amount
+        * target_year: the target year
+        * exchange_rates: by default IMF data, but other can be injected
+        * deflator: by default IMF data, but other can be injected
+
+    Returns:
+        the monetary amount in target currency in the target year
+
+    """
+    assert target_year >= base_year
+    amount_in_dollar = currency_in_dollars(
+        currency_value=amount,
+        currency=from_currency,
+        year=base_year
+    )
+    amount_in_dollar = deflate_monetary_value(
+        base_value=amount_in_dollar,
+        currency="USD",
+        base_year=base_year,
+        to_year=target_year,
+        deflator=deflator
+    )
+    dollar_per_target_currency = currency_in_dollars(
+        currency_value=1,
+        currency=to_currency,
+        year=target_year
+    )
+    return amount_in_dollar / dollar_per_target_currency
+
+
 def currency_in_dollars(currency_value, currency, year, exchange_rates=EXCHANGE_RATE_TIME_SERIES):
     """Convert monetary amounts to US Dollars based on historic exchange rates.
 

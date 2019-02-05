@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from currency import currency_in_dollars, convert, deflate_monetary_value, SUPPORTED_CURRENCIES
+from currency import currency_in_dollars, convert, convert_through_usd, deflate_monetary_value, SUPPORTED_CURRENCIES
 
 
 @pytest.mark.parametrize(
@@ -84,6 +84,41 @@ def test_convert_identity(year):
 def test_pound_up_to_50pct_stronger_than_eur(year):
     eur = convert(amount=1, from_currency="gbp", to_currency="eur", year=year)
     assert 1 < eur < 1.5
+
+
+def test_convert_through_usd_without_time_is_convert():
+    through_usd = convert_through_usd(
+        amount=1,
+        from_currency="gbp",
+        to_currency="eur",
+        base_year=2009,
+        target_year=2009
+    )
+    normal = convert(
+        amount=1,
+        from_currency="gbp",
+        to_currency="eur",
+        year=2009
+    )
+    assert math.isclose(through_usd, normal)
+
+
+def test_convert_through_usd():
+    eur2009 = convert_through_usd(
+        amount=1,
+        from_currency="gbp",
+        to_currency="eur",
+        base_year=2009,
+        target_year=2009
+    )
+    eur2010 = convert_through_usd(
+        amount=1,
+        from_currency="gbp",
+        to_currency="eur",
+        base_year=2009,
+        target_year=2010
+    )
+    assert eur2010 > eur2009
 
 
 @pytest.mark.parametrize(
