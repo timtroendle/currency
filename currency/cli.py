@@ -1,6 +1,17 @@
 import click
 
-from currency import currency_in_dollars, deflate_monetary_value
+import currency as cu
+
+
+class Currency(click.ParamType):
+
+    name = "currency"
+
+    def convert(self, value, param, ctx):
+        if value.lower() in [currency.alpha_3 for currency in cu.SUPPORTED_CURRENCIES]:
+            return value
+        else:
+            self.fail(f"Currency {value} is not supported.")
 
 
 @click.group()
@@ -10,14 +21,16 @@ def currency():
 
 @currency.command()
 @click.argument("amount", type=float)
-@click.argument("currency")
+@click.argument("from_currency", type=Currency())
+@click.argument("to_currency", type=Currency())
 @click.argument("year", type=int)
-def convert(amount, currency, year):
-    """Convert monetary amounts to US Dollars based on historic exchange rates."""
+def convert(amount, from_currency, to_currency, year):
+    """Convert monetary amounts to other currency based on historic exchange rates."""
     try:
-        result = currency_in_dollars(
-            currency_value=amount,
-            currency=currency,
+        result = cu.convert(
+            amount=amount,
+            from_currency=from_currency,
+            to_currency=to_currency,
             year=year
         )
         click.echo(result)
@@ -32,7 +45,7 @@ def convert(amount, currency, year):
 def deflate(base_amount, base_year, to_year):
     """Deflate US Dollar value from base year to other year based on GDP."""
     try:
-        result = deflate_monetary_value(
+        result = cu.deflate_monetary_value(
             base_value=base_amount,
             base_year=base_year,
             to_year=to_year

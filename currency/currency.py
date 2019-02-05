@@ -98,6 +98,37 @@ CURRENCY_TO_COUNTRY_MAP = {
 }
 
 
+def convert(amount, from_currency, to_currency, year, exchange_rates=EXCHANGE_RATE_TIME_SERIES):
+    """Convert monetary amounts to other currencies based on historic exchange rates to US Dollars.
+
+    By default, the data stems from IMF:
+    https://data.worldbank.org/indicator/PA.NUS.FCRF
+    but you can also inject your own timeseries, see below.
+
+    Parameters:
+        * amount: (float) amount to convert
+        * from_currency: alpha_3 code of source currency
+        * to_currency: alpha_3 code of target currency
+        * year: the year of the source amount
+        * exchange_rates: by default IMF data, but other can be injected
+
+    Returns:
+        the monetary amount in target currency
+
+    """
+    amount_in_dollar = currency_in_dollars(
+        currency_value=amount,
+        currency=from_currency,
+        year=year
+    )
+    dollar_per_target_currency = currency_in_dollars(
+        currency_value=1,
+        currency=to_currency,
+        year=year
+    )
+    return amount_in_dollar / dollar_per_target_currency
+
+
 def currency_in_dollars(currency_value, currency, year, exchange_rates=EXCHANGE_RATE_TIME_SERIES):
     """Convert monetary amounts to US Dollars based on historic exchange rates.
 

@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from currency import currency_in_dollars, deflate_monetary_value, SUPPORTED_CURRENCIES
+from currency import currency_in_dollars, convert, deflate_monetary_value, SUPPORTED_CURRENCIES
 
 
 @pytest.mark.parametrize(
@@ -71,6 +71,19 @@ def test_150_nigerian_naira_roughly_1_dollar(year):
 def test_between_5_and_10_egyptian_pound_per_dollar(year):
     dollar_value = currency_in_dollars(1, "egp", year=year)
     assert 0.1 < dollar_value < 0.2
+
+
+@pytest.mark.parametrize('year', range(2000, 2015))
+def test_convert_identity(year):
+    amount = 10
+    identity = convert(amount=amount, from_currency="eur", to_currency="eur", year=year)
+    assert math.isclose(identity, amount)
+
+
+@pytest.mark.parametrize('year', range(2010, 2017))
+def test_pound_up_to_50pct_stronger_than_eur(year):
+    eur = convert(amount=1, from_currency="gbp", to_currency="eur", year=year)
+    assert 1 < eur < 1.5
 
 
 @pytest.mark.parametrize(

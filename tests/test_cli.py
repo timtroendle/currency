@@ -18,20 +18,20 @@ def test_help(runner):
 
 
 def test_currency_conversion(runner):
-    result = runner.invoke(cli.convert, ['14', 'USD', '2009'])
+    result = runner.invoke(cli.convert, ['14', 'USD', 'USD', '2009'])
     assert result.exit_code == 0
     assert math.isclose(float(result.output), 14)
 
 
 def test_unsupported_currency(runner):
-    result = runner.invoke(cli.convert, ['76', 'pdb', '2006'])
+    result = runner.invoke(cli.convert, ['76', 'PDB', 'USD', '2006'])
     assert result.exit_code != 0
     assert "Currency PDB is not supported." in result.output
 
 
 @pytest.mark.parametrize('unavailable_year', ['1980', '2080'])
 def test_no_exchange_rate_available(runner, unavailable_year):
-    result = runner.invoke(cli.convert, ['16', 'EUR', unavailable_year])
+    result = runner.invoke(cli.convert, ['16', 'EUR', 'USD', unavailable_year])
     assert result.exit_code != 0
     assert "Cannot convert" in result.output
 

@@ -4,12 +4,9 @@
 
 A time aware tool to convert currencies.
 
+With `currency` you can convert between currencies at particular points in time.
+
 ## User Guide
-
-currency has the following features:
-
-* convert between currencies at a particular point in time (to US Dollar only)
-* convert between the same currency in different points in time (US Dollar only)
 
 ### Installation
 
@@ -22,7 +19,8 @@ pip install git+git://github.com/timtroendle/currency@develop
 
 ### Usage Example
 
-...
+    $ currency convert 14 GBP EUR 2009 # convert 14 GBP2009 to EUR2009
+
 
 ## Developer Guide
 

@@ -11,7 +11,9 @@ setup(
     url='https://www.github.com/timtroendle/currency',
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
-    install_requires=["click"],
+    install_requires=[
+        "click >= 6.0"
+    ],
     entry_points={
         'console_scripts': [
             'currency=currency.cli:currency',
