@@ -40,13 +40,15 @@ def convert(amount, from_currency, to_currency, year):
 
 @currency.command()
 @click.argument("base_amount", type=float)
+@click.argument("currency", type=Currency())
 @click.argument("base_year", type=int)
 @click.argument("to_year", type=int)
-def deflate(base_amount, base_year, to_year):
-    """Deflate US Dollar value from base year to other year based on GDP."""
+def deflate(base_amount, currency, base_year, to_year):
+    """Deflate monetary value from base year to other year based on GDP."""
     try:
         result = cu.deflate_monetary_value(
             base_value=base_amount,
+            currency=currency,
             base_year=base_year,
             to_year=to_year
         )

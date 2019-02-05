@@ -4,7 +4,7 @@
 
 A time aware tool to convert currencies.
 
-With `currency` you can convert between currencies at particular points in time.
+With `currency` you can convert between currencies at particular points in time, and you can convert between different points in time for a particular currency.
 
 ## User Guide
 
@@ -20,6 +20,7 @@ pip install git+git://github.com/timtroendle/currency@develop
 ### Usage Example
 
     $ currency convert 14 GBP EUR 2009 # convert 14 GBP2009 to EUR2009
+    $ currency deflate 14 GBP 2009 2016 # deflate 14 GBP2009 to GBP2016
 
 
 ## Developer Guide

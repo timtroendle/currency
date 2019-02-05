@@ -37,11 +37,11 @@ def test_no_exchange_rate_available(runner, unavailable_year):
 
 
 def test_currency_deflation(runner):
-    result = runner.invoke(cli.deflate, ['15', '2009', '2009'])
+    result = runner.invoke(cli.deflate, ['15', 'USD', '2009', '2009'])
     assert result.exit_code == 0
     assert math.isclose(float(result.output), 15)
 
 
 def test_no_deflator_available(runner):
-    result = runner.invoke(cli.deflate, ['15', '2009', '2090'])
+    result = runner.invoke(cli.deflate, ['15', 'USD', '2009', '2090'])
     assert result.exit_code != 0

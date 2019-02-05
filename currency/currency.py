@@ -161,15 +161,16 @@ def currency_in_dollars(currency_value, currency, year, exchange_rates=EXCHANGE_
     return currency_value / exchange_rate
 
 
-def deflate_monetary_value(base_value, base_year, to_year, deflator=DEFLATOR):
-    """Deflate US Dollar value from base year to other year based on GDP.
+def deflate_monetary_value(base_value, currency, base_year, to_year, deflator=DEFLATOR):
+    """Deflate monetary value from base year to other year based on GDP.
 
     By default uses a deflator published by the Worldbank:
     https://data.worldbank.org/indicator/NY.GDP.DEFL.ZS
     but you can also inject your own timeseries, see below.
 
     Parameters:
-        * base_value: the monetary amount in US Dollars in the base year
+        * base_value: the monetary amount in the base year
+        * currency: the currency of the monetary amount
         * base_year: the year for which the monetary value is given
         * to_year: the year to which the base value should be transformed
         * deflator: by default Worldbank data, but other can be injected
@@ -178,11 +179,17 @@ def deflate_monetary_value(base_value, base_year, to_year, deflator=DEFLATOR):
         the monetary value from the base year deflated to the other year
 
     """
-    country = CURRENCY_TO_COUNTRY_MAP["usd"]
+    assert isinstance(currency, str), "Currency must be given as a string."
+    currency = currency.lower()
+    if currency not in [currency.alpha_3 for currency in SUPPORTED_CURRENCIES]:
+        raise ValueError(f"Currency {currency.upper()} is not supported.")
+    country = CURRENCY_TO_COUNTRY_MAP[currency]
     try:
         base = deflator.loc[base_year, country]
         to = deflator.loc[to_year, country]
+        if np.isnan(base) or np.isnan(to):
+            raise LookupError()
     except LookupError:
         raise LookupError(f"Data for year {base_year} or {to_year} not available. "
-                          f"Cannot deflate {base_value} USD{base_year} to year {to_year}.")
+                          f"Cannot deflate {base_value} {currency.upper()}{base_year} to {currency.upper()}{to_year}.")
     return base_value * to / base

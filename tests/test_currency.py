@@ -93,7 +93,8 @@ def test_pound_up_to_50pct_stronger_than_eur(year):
 def test_no_inflation_in_same_year(year):
     base_value = 1.1
     current_value = deflate_monetary_value(
-        base_value,
+        currency="USD",
+        base_value=base_value,
         base_year=year,
         to_year=year
     )
@@ -101,13 +102,16 @@ def test_no_inflation_in_same_year(year):
 
 
 @pytest.mark.parametrize(
-    'year',
-    [year for year in range(1960, 2015)]
+    'year, currency',
+    [(year, currency)
+     for year in range(1970, 2015)
+     for currency in ["USD", "EGP"]]
 )
-def test_inflation_is_steadily_rising(year):
+def test_inflation_is_steadily_rising(year, currency):
     base_value = 1.1
     current_value = deflate_monetary_value(
-        base_value,
+        currency=currency,
+        base_value=base_value,
         base_year=year,
         to_year=year + 1
     )
