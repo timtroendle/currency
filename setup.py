@@ -12,7 +12,9 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     install_requires=[
-        "click >= 6.0"
+        "click >= 6.0",
+        "numpy >= 0.15",
+        "pandas >= 0.24"
     ],
     entry_points={
         'console_scripts': [
